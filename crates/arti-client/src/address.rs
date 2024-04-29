@@ -225,9 +225,21 @@ impl TorAddr {
         addr.into_tor_addr_dangerously()
     }
 
+    // TODO: add related tests
+    /// Return true if this is an hostname (rather than a IP address or hidden service (`.onion service`)).
+    pub fn is_hostname(&self) -> bool {
+        matches!(&self.host, Host::Hostname(_))
+    }
+
     /// Return true if this is an IP address (rather than a hostname).
     pub fn is_ip_address(&self) -> bool {
         matches!(&self.host, Host::Ip(_))
+    }
+
+    // TODO: add related tests
+    /// Return true if this is an hidden service (`.onion` service) (rather than a hostname or IP address).
+    pub fn is_onion_address(&self) -> bool {
+        matches!(&self.host, Host::Onion(_))
     }
 
     /// Get instructions for how to make a stream to this address
