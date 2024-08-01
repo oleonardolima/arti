@@ -39,7 +39,10 @@ static CACHE: Lazy<Mutex<TrustedUsersCache<PwdGrp>>> =
     Lazy::new(|| Mutex::new(TrustedUsersCache::default()));
 
 /// Convert an [`io::Error `] representing a user/group handling failure into an [`Error`]
+#[allow(clippy::print_stdout)]
 fn handle_pwd_error(e: io::Error) -> Error {
+    print!("{:?}", e);
+    // panic!("{:?}", e);
     Error::PasswdGroupIoError(e.into())
 }
 
@@ -182,6 +185,7 @@ impl TrustedUser {
         Ok(calculated)
     }
     /// As `get_uid`, but take a userdb.
+    #[allow(clippy::print_stdout)]
     fn get_uid_impl<U: PwdGrpProvider>(&self, userdb: &U) -> Result<Option<u32>, Error> {
         use std::os::unix::ffi::OsStrExt as _;
 
@@ -189,11 +193,15 @@ impl TrustedUser {
             TrustedUser::None => Ok(None),
             TrustedUser::Current => Ok(Some(userdb.getuid())),
             TrustedUser::Id(id) => Ok(Some(*id)),
-            TrustedUser::Name(name) => userdb
-                .getpwnam(name.as_bytes())
-                .map_err(handle_pwd_error)?
-                .map(|u: pwd_grp::Passwd<Vec<u8>>| Some(u.uid))
-                .ok_or_else(|| Error::NoSuchUser(name.to_string_lossy().into_owned())),
+            TrustedUser::Name(name) => {
+                println!("name {:?}", name);
+
+                userdb
+                    .getpwnam(name.as_bytes())
+                    .map_err(handle_pwd_error)?
+                    .map(|u: pwd_grp::Passwd<Vec<u8>>| Some(u.uid))
+                    .ok_or_else(|| Error::NoSuchUser(name.to_string_lossy().into_owned()))
+            }
         }
     }
 }
