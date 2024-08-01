@@ -39,7 +39,10 @@ static CACHE: Lazy<Mutex<TrustedUsersCache<PwdGrp>>> =
     Lazy::new(|| Mutex::new(TrustedUsersCache::default()));
 
 /// Convert an [`io::Error `] representing a user/group handling failure into an [`Error`]
+#[allow(clippy::print_stdout)]
 fn handle_pwd_error(e: io::Error) -> Error {
+    print!("{:?}", e);
+    // panic!("{:?}", e);
     Error::PasswdGroupIoError(e.into())
 }
 
