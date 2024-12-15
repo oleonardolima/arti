@@ -230,6 +230,7 @@ fn get_program_dir() -> Result<Option<String>, CfgPathError> {
 
 /// Shellexpand helper: Expand a shell variable if we can.
 #[cfg(feature = "expand-paths")]
+#[allow(clippy::print_stdout)]
 fn get_env(var: &str) -> Result<Option<Cow<'static, str>>, CfgPathError> {
     let path = match var {
         "ARTI_CACHE" => project_dirs()?.cache_dir(),
@@ -240,6 +241,8 @@ fn get_env(var: &str) -> Result<Option<Cow<'static, str>>, CfgPathError> {
         "USER_HOME" => base_dirs()?.home_dir(),
         _ => return Err(CfgPathError::UnknownVar(var.to_owned())),
     };
+
+    println!("var: {} | path: {:?}", var, path);
 
     match path.to_str() {
         // Note that we never return Ok(None) -- an absent variable is

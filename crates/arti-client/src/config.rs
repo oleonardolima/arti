@@ -217,13 +217,19 @@ pub struct StorageConfig {
 impl_standard_builder! { StorageConfig }
 
 /// Return the default cache directory.
+#[allow(clippy::print_stdout)]
 fn default_cache_dir() -> CfgPath {
-    CfgPath::new("${ARTI_CACHE}".to_owned())
+    let cfg_path = CfgPath::new("${ARTI_CACHE}".to_owned());
+    println!("{:?}", cfg_path);
+    cfg_path
 }
 
 /// Return the default state directory.
+#[allow(clippy::print_stdout)]
 fn default_state_dir() -> CfgPath {
-    CfgPath::new("${ARTI_LOCAL_DATA}".to_owned())
+    let cfg_path = CfgPath::new("${ARTI_LOCAL_DATA}".to_owned());
+    println!("{:?}", cfg_path);
+    cfg_path
 }
 
 /// Macro to avoid repeating code for `expand_*_dir` functions on StorageConfig
@@ -243,11 +249,15 @@ macro_rules! expand_dir {
 impl StorageConfig {
     /// Try to expand `state_dir` to be a path buffer.
     pub(crate) fn expand_state_dir(&self) -> Result<PathBuf, ConfigBuildError> {
-        expand_dir!(self, state_dir)
+        let dir = expand_dir!(self, state_dir);
+        println!("{:?}", dir);
+        dir
     }
     /// Try to expand `cache_dir` to be a path buffer.
     pub(crate) fn expand_cache_dir(&self) -> Result<PathBuf, ConfigBuildError> {
-        expand_dir!(self, cache_dir)
+        let dir = expand_dir!(self, cache_dir);
+        println!("{:?}", dir);
+        dir
     }
     /// Return the keystore config
     #[allow(clippy::unnecessary_wraps)]
@@ -262,6 +272,7 @@ impl StorageConfig {
     }
     /// Return the FS permissions to use for state and cache directories.
     pub(crate) fn permissions(&self) -> &Mistrust {
+        println!("{:?}", self.permissions);
         &self.permissions
     }
 }
